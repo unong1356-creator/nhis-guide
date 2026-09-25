@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>서류발급 비서 - 국민건강보험</title>
+    <title>서류발급 비서 - 든든이</title>
     <style>
         * {
             box-sizing: border-box;
@@ -33,7 +33,6 @@
             transition: width 0.3s ease;
         }
 
-        /* 선택 화면(사진 없음)일 때 안내창 전면 확장 */
         .guide-panel.full-width {
             width: 100%;
             border-right: none;
@@ -63,7 +62,7 @@
         }
 
         .step-instruction {
-            font-size: 26px;
+            font-size: 25px;
             font-weight: 800;
             color: #1e293b;
             line-height: 1.6;
@@ -71,22 +70,73 @@
             white-space: pre-wrap;
         }
 
-        /* 주황색 굵은 강조 스타일 */
         .orange {
             color: #E65100;
             font-weight: 900;
         }
 
+        /* 홈 대형 서류 선택 카드 */
+        .home-menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 40px;
+            margin-bottom: 30px;
+        }
+
+        .menu-card {
+            background-color: #f8fafc;
+            border: 3px solid #cbd5e1;
+            border-radius: 20px;
+            padding: 40px 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.04);
+        }
+
+        .menu-card:hover {
+            border-color: #1D9E75;
+            background-color: #f0fdf4;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(29, 158, 117, 0.15);
+        }
+
+        .menu-card .card-icon {
+            font-size: 55px;
+            margin-bottom: 20px;
+        }
+
+        .menu-card .card-title {
+            font-size: 28px;
+            font-weight: 900;
+            color: #005088;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .menu-card .card-desc {
+            font-size: 19px;
+            color: #64748b;
+            font-weight: bold;
+            line-height: 1.4;
+        }
+
         /* 하단 조작 버튼 영역 */
         .nav-buttons {
             display: flex;
-            gap: 15px;
+            gap: 12px;
+            flex-wrap: wrap;
         }
 
         .btn {
             flex: 1;
-            padding: 22px 16px;
-            font-size: 21px;
+            padding: 20px 14px;
+            font-size: 20px;
             font-weight: bold;
             border: none;
             border-radius: 12px;
@@ -101,7 +151,7 @@
         .btn-prev {
             background-color: #e2e8f0;
             color: #475569;
-            flex: 0 0 160px;
+            flex: 0 0 140px;
         }
 
         .btn-prev:hover {
@@ -117,7 +167,7 @@
             background-color: #157958;
         }
 
-        /* 로그인 분기 선택 버튼 스타일 */
+        /* 로그인 분기 선택 버튼 */
         .btn-choice-kakao {
             background-color: #fee500;
             color: #191919;
@@ -134,7 +184,7 @@
             background-color: #c74300;
         }
 
-        /* 6-1 발급 방식 분기 버튼 스타일 */
+        /* 발급 방식 버튼 */
         .btn-choice-fax {
             background-color: #2563eb;
             color: #ffffff;
@@ -144,10 +194,18 @@
         }
 
         .btn-choice-cert {
-            background-color: #0d9488;
+            background-color: #4f46e5;
             color: #ffffff;
         }
         .btn-choice-cert:hover {
+            background-color: #4338ca;
+        }
+
+        .btn-choice-pdf {
+            background-color: #0d9488;
+            color: #ffffff;
+        }
+        .btn-choice-pdf:hover {
             background-color: #0f766e;
         }
 
@@ -170,9 +228,6 @@
             width: 100%; 
             height: 100%; 
             background-color: transparent; 
-            border-radius: 0; 
-            padding: 0; 
-            box-shadow: none; 
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -183,7 +238,6 @@
             width: 100%;
             height: 100%;
             background-color: transparent; 
-            border-radius: 0; 
             overflow: hidden;
             position: relative;
         }
@@ -205,7 +259,7 @@
             pointer-events: auto;
         }
 
-        /* 건강보험 인증서 마지막 단계: 3개 이미지 가로 나열 컨테이너 */
+        /* 3개 이미지 가로 나열 컨테이너 */
         .triple-image-container {
             display: none;
             width: 100%;
@@ -252,30 +306,34 @@
 
     <div class="guide-panel" id="guidePanel">
         <div class="header">
-            <h1>국민건강보험 서류발급 비서</h1>
+            <h1>국민건강보험 서류발급 비서 '든든이'</h1>
         </div>
 
-        <div class="step-info">
+        <div class="step-info" id="stepInfoContainer">
             <div class="step-number" id="stepNum">단계 1</div>
             <div class="step-instruction" id="stepText">가이드를 불러오는 중입니다...</div>
+            <div id="homeGridContainer"></div>
         </div>
 
         <div class="nav-buttons" id="buttonContainer">
-            <button class="btn btn-prev" onclick="prevStep()">이전으로</button>
-            <button class="btn btn-next" onclick="nextStep()" id="nextBtn">확인했습니다 (다음 단계)</button>
+            <!-- JS 동적 생성 -->
         </div>
     </div>
 
     <div class="phone-panel" id="phonePanel">
         <div class="phone-frame">
             <div class="phone-screen" id="imageContainer">
-                <!-- 공통 단계 이미지 (0~3) -->
-                <img src="0.png" alt="0" class="raw-guide-image active" id="img-common-1">
+                <!-- 공통 단계 (납부확인서: 0, 1, 2, 3) -->
+                <img src="0.png" alt="0" class="raw-guide-image" id="img-common-1">
                 <img src="1.png" alt="1" class="raw-guide-image" id="img-common-2">
                 <img src="2.png" alt="2" class="raw-guide-image" id="img-common-3">
                 <img src="3.png" alt="3" class="raw-guide-image" id="img-common-4">
 
-                <!-- 분기 A: 카카오톡 간편인증 이미지 (5-1 ~ 5-6) -->
+                <!-- 완납증명서 전용 초기 단계 (7-0.png, 7-0-1.png) -->
+                <img src="7-0.png" alt="7-0" class="raw-guide-image" id="img-wn-init-3">
+                <img src="7-0-1.png" alt="7-0-1" class="raw-guide-image" id="img-wn-init-4">
+
+                <!-- 분기 A: 카카오 간편인증 (5-1~5-6) -->
                 <img src="5-1.png" alt="5-1" class="raw-guide-image" id="img-kakao-1">
                 <img src="5-2.png" alt="5-2" class="raw-guide-image" id="img-kakao-2">
                 <img src="5-3.png" alt="5-3" class="raw-guide-image" id="img-kakao-3">
@@ -283,7 +341,7 @@
                 <img src="5-5.png" alt="5-5" class="raw-guide-image" id="img-kakao-5">
                 <img src="5-6.png" alt="5-6" class="raw-guide-image" id="img-kakao-6">
 
-                <!-- 분기 B: 건강보험 인증서 발급 이미지 (4-1 ~ 4-10) -->
+                <!-- 분기 B: 건강보험 인증서 (4-1~4-10) -->
                 <img src="4-1.png" alt="4-1" class="raw-guide-image" id="img-nhis-1">
                 <img src="4-2.png" alt="4-2" class="raw-guide-image" id="img-nhis-2">
                 <img src="4-3.png" alt="4-3" class="raw-guide-image" id="img-nhis-3">
@@ -295,7 +353,7 @@
                 <img src="4-9.png" alt="4-9" class="raw-guide-image" id="img-nhis-9">
                 <img src="4-10.png" alt="4-10" class="raw-guide-image" id="img-nhis-10">
 
-                <!-- 건강보험 인증서 11단계 (4-11 ~ 4-13 3분할 화면) -->
+                <!-- 건강보험 인증서 11단계 (4-11 ~ 4-13 3분할) -->
                 <div class="triple-image-container" id="tripleContainer">
                     <div class="triple-image-item">
                         <img src="4-11.png" alt="4-11">
@@ -311,26 +369,58 @@
                     </div>
                 </div>
 
-                <!-- 발급 단계 이미지 (6-1, 6-2) -->
-                <img src="6-1.png" alt="6-1" class="raw-guide-image" id="img-issue-1">
-                <img src="6-2.png" alt="6-2" class="raw-guide-image" id="img-issue-2">
+                <!-- [납부확인서] 6단계 메인 및 분기 이미지 -->
+                <img src="6.png" alt="6" class="raw-guide-image" id="img-step-6">
+                <img src="6-1.png" alt="6-1" class="raw-guide-image" id="img-fax-1">
+                <img src="6-2.png" alt="6-2" class="raw-guide-image" id="img-cert-1">
+                <img src="6-2-1.png" alt="6-2-1" class="raw-guide-image" id="img-cert-2">
+                <img src="6-3.png" alt="6-3" class="raw-guide-image" id="img-pdf-1">
+                <img src="6-3-1.png" alt="6-3-1" class="raw-guide-image" id="img-pdf-2">
+                <img src="6-3-2.png" alt="6-3-2" class="raw-guide-image" id="img-pdf-3">
+                <img src="6-3-3.png" alt="6-3-3" class="raw-guide-image" id="img-pdf-4">
+                <img src="6-3-4.png" alt="6-3-4" class="raw-guide-image" id="img-pdf-5">
+                <img src="6-3-5.png" alt="6-3-5" class="raw-guide-image" id="img-pdf-6">
+
+                <!-- [완납증명서] 7단계 메인 및 분기 이미지 -->
+                <img src="7.png" alt="7" class="raw-guide-image" id="img-wn-main">
+                <img src="7-1-1.png" alt="7-1-1" class="raw-guide-image" id="img-wn-print-1">
+                <img src="7-1-2.png" alt="7-1-2" class="raw-guide-image" id="img-wn-print-2">
+                <img src="7-2.png" alt="7-2" class="raw-guide-image" id="img-wn-fax">
             </div>
         </div>
     </div>
 
     <script>
-        // 1. 공통 단계 안내 문구 (1~4단계)
-        const commonSteps = [
-            `안녕하세요, 고객님!\n창구 대기 고객이 많아 오래 기다리셔야 합니다.\n\n대기 없이 <span class="orange">3분 만에 스마트폰으로 서류 발급 가능</span>합니다!\n\n<span class="orange">[건강보험 25시]</span> 어플이 있으신가요?\n없으시다면, 우측의 <span class="orange">QR코드</span>를 통해 설치해주세요!`,
-            `스마트폰 바탕화면에서 <span class="orange">[건강보험 25시]</span> 어플을 눌러주세요!`,
-            `주황색으로 강조 표시된 <span class="orange">[바로가기]</span>를 선택해주세요.`,
-            `주황색으로 강조 표시된 <span class="orange">[보험료 납부확인서 발급]</span>을 선택해주세요.`
-        ];
+        let selectedDoc = 'pay'; // 'pay' | 'complete'
+        let stage = 'home'; 
+        let currentSubStep = 1;
+        let loginMethod = 'kakao'; 
 
-        // 2. 로그인 선택 문구 (사진 X)
+        // 1. 공통 및 초기 단계 안내 문구
+        function getCommonStepText(subStep) {
+            if (subStep === 1) {
+                return `안녕하세요, 고객님!\n창구 대기 고객이 많아 오래 기다리셔야 합니다.\n\n대기 없이 <span class="orange">3분 만에 스마트폰으로 서류 발급 가능</span>합니다!\n\n<span class="orange">[건강보험 25시]</span> 어플이 있으신가요?\n없으시다면, 우측의 <span class="orange">QR코드</span>를 통해 설치해주세요!`;
+            } else if (subStep === 2) {
+                return `스마트폰 바탕화면에서 <span class="orange">[건강보험 25시]</span> 어플을 눌러주세요!`;
+            } else if (subStep === 3) {
+                if (selectedDoc === 'pay') {
+                    return `주황색으로 강조 표시된 <span class="orange">[바로가기]</span>를 선택해주세요.`;
+                } else {
+                    return `상단 검색창에 주황색 글씨로 안내된 <span class="orange">"완납증명서"</span>를 입력해주세요!`;
+                }
+            } else if (subStep === 4) {
+                if (selectedDoc === 'pay') {
+                    return `주황색으로 강조 표시된 <span class="orange">[보험료 납부확인서 발급]</span>을 선택해주세요.`;
+                } else {
+                    return `모바일 메뉴 검색 결과에서\n주황색 상자로 강조된 <span class="orange">[증명서 > 건강보험 > 4대 사회보험료 완납증명서]</span>를 선택해주세요!`;
+                }
+            }
+        }
+
+        // 2. 로그인 선택 문구
         const choiceStepText = `카카오톡 또는 네이버 인증서 발급이 되어있으신가요?\n\n[카카오톡 또는 네이버 인증서]가 있다면 -> <span class="orange">간편인증 로그인</span>\n없으시다면 -> <span class="orange">건강보험 인증서 발급 로그인</span>\n\n건강보험 인증서 발급 시 [건강보험 25시] 어플 사용 시 자동로그인 되어 편리합니다!\n\n선택해주세요!`;
 
-        // 3. [경로 A] 카카오톡 간편인증 문구 (5-1 ~ 5-6)
+        // 3. 카카오 간편인증 문구
         const kakaoSteps = [
             `주황색으로 강조 표시된 <span class="orange">[로그인]</span>을 선택해주세요.`,
             `주황색으로 강조 표시된 <span class="orange">[카카오톡]</span>을 선택해주세요.`,
@@ -340,7 +430,7 @@
             `카카오톡 인증 완료 후 어플로 돌아와 하단의 주황색 <span class="orange">[인증 완료]</span>를 눌러주세요!`
         ];
 
-        // 4. [경로 B] 건강보험 인증서 발급 문구 (4-1 ~ 4-13)
+        // 4. 건강보험 인증서 문구
         const nhisSteps = [
             `주황색으로 강조 표시된 <span class="orange">[다른 로그인 방법 선택]</span>을 선택해주세요.`,
             `주황색으로 강조 표시된 <span class="orange">[건강보험 인증서]</span>를 선택해주세요.`,
@@ -355,37 +445,81 @@
             `<span class="orange">[로그인]</span>을 눌러주시고, 설정한 <span class="orange">비밀번호 6자리</span>를 입력해주세요!`
         ];
 
-        // 5. 발급 단계 문구 (6-1, 6-2)
-        const issueStep1Text = `주황색으로 강조 표시된 <span class="orange">①, ②, ③번</span>을 설정한 뒤 <span class="orange">조회</span>를 눌러주세요!\n\n조회 결과에서 출력할 목록을 선택한 뒤 <span class="orange">팩스전송</span> 또는 <span class="orange">전자증명서(다운로드)</span>를 눌러주세요.\n\n<span class="orange">팩스전송</span> 또는 <span class="orange">전자증명서</span> 중 선택해주세요! 다음 단계를 안내해드릴게요 : )`;
+        // 5. [납부확인서] 안내 문구
+        const payStep6MainText = `주황색으로 강조 표시된 <span class="orange">①, ②, ③번</span>을 설정한 뒤 <span class="orange">④번 [조 회]</span>를 눌러주세요!\n\n조회 결과에서 <span class="orange">⑤번 목록 체크</span> 후,\n★ 실물 종이 출력을 원하시면 하단 파란색 <span class="orange">[전자증명서(다운로드)]</span>를 눌러주셔야 합니다!\n\n원하시는 발급 방식을 아래 버튼에서 선택해 주세요!`;
+        const faxSteps = [`①, ②번 순서에 따라\n<span class="orange">팩스전송번호 확인</span>을 위해 두 번 입력한 후\n③번 <span class="orange">[팩스보내기]</span>를 눌러주세요!\n\n<span class="orange">납부확인서 팩스 전송 성공입니다!</span> 고생하셨습니다 ㅎㅎ`];
+        const certSteps = [`하단의 주황색 화살표가 가리키는 <span class="orange">[발급내역 확인]</span> 버튼을 선택해주세요!`, `①번 <span class="orange">체크박스</span>를 선택한 뒤\n하단의 ②번 <span class="orange">[보내기]</span> 버튼을 눌러주세요!\n\n스마트폰 전자문서지갑으로 서류가 안전하게 발급되었습니다!`];
+        const pdfSteps = [
+            `스마트폰 화면 하단의 파란색 <span class="orange">[전자증명서(다운로드)]</span>를 누르신 후,\n팝업창에서 주황색 화살표의 <span class="orange">[발급내역 확인]</span> 버튼을 선택해주세요!`,
+            `화살표가 가리키는 파란색 <span class="orange">[전자증명서 다운로드(PDF)]</span> 글자를 선택해주세요!`,
+            `문서를 열람할 때 필요한 비밀번호를 설정할 수 있습니다.\n\n① <span class="orange">[미설정]</span>: 비밀번호 없이 바로 열기\n② <span class="orange">[확인]</span>: 생년월일 비밀번호 설정 후 열기\n\n원하시는 방식을 선택해주세요!`,
+            `열람용 비밀번호 설정을 선택하셨다면\n① <span class="orange">숫자 6자리</span> 입력 후\n② 하단의 <span class="orange">[등록]</span> 버튼을 눌러주세요!`,
+            `화면 하단에 다운로드 확인 창이 뜨면\n주황색 화살표의 <span class="orange">[다운로드]</span>를 선택해주세요!`,
+            `<span class="orange">★ 마지막 제출 및 실물 출력 안내 ★</span>\n\n1. 스마트폰 파일 앱에서 다운로드한 제증명서를 엽니다.\n2. 화면을 캡처한 후 <span class="orange">1844-2716</span> 번호로 사진 문자를 전송합니다.\n3. 창구 직원에게 신분증을 제시하고 종이 출력물을 수령하시면 끝납니다!`
+        ];
 
-        const issueStep2FaxText = `①, ②, ③ 순서에 따라\n<span class="orange">팩스전송번호 확인</span>을 위해 두 번 입력한 후 <span class="orange">팩스보내기</span>를 눌러주세요!\n\n<span class="orange">납부확인서 팩스 전송 성공입니다!</span> 고생하셨습니다 ㅎㅎ`;
-
-        const issueStep2CertText = `하단의 파란색 <span class="orange">[전자증명서(다운로드)]</span>를 선택하시면 고객님의 스마트폰 전자문서지갑으로 서류가 안전하게 발급됩니다!\n\n<span class="orange">전자증명서 발급 완료입니다!</span> 고생하셨습니다 ㅎㅎ`;
-
-        // 상태 관리
-        let stage = 'common'; // 'common' | 'choice' | 'kakao' | 'nhis' | 'issue-1' | 'issue-2-fax' | 'issue-2-cert'
-        let currentSubStep = 1;
-        let loginMethod = 'kakao'; // 'kakao' | 'nhis' (이전으로 돌아갈 때 기억용)
+        // 6. [완납증명서] 7.png 반영 안내 문구
+        const wnMainText = `주황색으로 강조 표시된 <span class="orange">①번 [보험구분]</span>을 확인하신 후 발급 방식을 선택해 주세요!\n\n- 종이로 직접 출력하시려면 -> <span class="orange">②번 [미리보기]</span> 선택\n- 팩스로 전송하시려면 -> <span class="orange">③번 [팩스]</span> 선택\n\n원하시는 발급 방식을 아래 버튼에서 눌러주세요!`;
+        const wnPrintSteps = [
+            `하단 좌측의 <span class="orange">[미리보기]</span>를 누르신 후,\n화면 상단 주황색 네모로 표시된 <span class="orange">[파일 저장(디스켓 모양)]</span> 아이콘을 눌러 스마트폰에 저장해주세요!`,
+            `<span class="orange">★ 완납증명서 출력 및 제출 안내 ★</span>\n\n1. 파일 앱에서 다운로드한 제증명서를 엽니다.\n   (문서 비밀번호: <span class="orange">생년월일 6자리</span> 입력)\n2. 화면을 캡처한 후 <span class="orange">1844-2716</span> 번호로 사진 문자를 전송합니다.\n3. 창구 직원에게 신분증을 제시하고 종이 출력물을 수령하시면 끝납니다!`
+        ];
+        const wnFaxSteps = [
+            `하단 우측의 <span class="orange">[팩스]</span> 버튼을 누르신 후,\n안내 화면에 따라 <span class="orange">팩스전송번호</span>를 2회 입력하고 하단의 <span class="orange">[팩스보내기]</span>를 눌러주세요!\n\n<span class="orange">완납증명서 팩스 전송 완료입니다!</span>`
+        ];
 
         function refreshDisplay() {
             const guidePanel = document.getElementById("guidePanel");
             const phonePanel = document.getElementById("phonePanel");
             const tripleContainer = document.getElementById("tripleContainer");
             const buttonContainer = document.getElementById("buttonContainer");
+            const homeGridContainer = document.getElementById("homeGridContainer");
 
-            // 모든 이미지 및 멀티 컨테이너 초기화
             const allImages = document.querySelectorAll('.raw-guide-image');
             allImages.forEach(img => img.classList.remove('active'));
             tripleContainer.classList.remove('active');
+            homeGridContainer.innerHTML = '';
 
-            if (stage === 'common') {
+            if (stage === 'home') {
+                guidePanel.classList.add("full-width");
+                phonePanel.classList.add("hidden");
+
+                document.getElementById("stepNum").innerText = "환영합니다! 원하시는 발급 서류를 선택해주세요";
+                document.getElementById("stepText").innerHTML = `바쁜 창구 대기 없이, 스마트폰으로 간편하게 3분 만에 서류를 발급받으실 수 있습니다.\n발급을 원하시는 <span class="orange">서류를 아래에서 큼직하게 터치</span>해주세요!`;
+
+                homeGridContainer.innerHTML = `
+                    <div class="home-menu-grid">
+                        <div class="menu-card" onclick="startWorkflow('pay')">
+                            <div class="card-icon">📄</div>
+                            <div class="card-title">보험료 납부확인서</div>
+                            <div class="card-desc">소득공제용 / 종합소득세 신고용 / 납부확인용 서류 발급</div>
+                        </div>
+                        <div class="menu-card" onclick="startWorkflow('complete')">
+                            <div class="card-icon">📑</div>
+                            <div class="card-title">4대 사회보험료<br>완납증명서</div>
+                            <div class="card-desc">공공기관 제출용 / 은행 제출용 4대보험 체납 없는 완납 증명서</div>
+                        </div>
+                    </div>
+                `;
+
+                buttonContainer.innerHTML = ``;
+            } else if (stage === 'common') {
                 guidePanel.classList.remove("full-width");
                 phonePanel.classList.remove("hidden");
 
-                document.getElementById("stepNum").innerText = `단계 ${currentSubStep} / 4`;
-                document.getElementById("stepText").innerHTML = commonSteps[currentSubStep - 1];
+                document.getElementById("stepNum").innerText = `시작 단계 ${currentSubStep} / 4`;
+                document.getElementById("stepText").innerHTML = getCommonStepText(currentSubStep);
 
-                const curImg = document.getElementById(`img-common-${currentSubStep}`);
+                let curImg = null;
+                if (selectedDoc === 'pay') {
+                    curImg = document.getElementById(`img-common-${currentSubStep}`);
+                } else {
+                    if (currentSubStep === 1) curImg = document.getElementById('img-common-1');
+                    else if (currentSubStep === 2) curImg = document.getElementById('img-common-2');
+                    else if (currentSubStep === 3) curImg = document.getElementById('img-wn-init-3');
+                    else if (currentSubStep === 4) curImg = document.getElementById('img-wn-init-4');
+                }
+
                 if (curImg) curImg.classList.add('active');
 
                 buttonContainer.innerHTML = `
@@ -436,50 +570,136 @@
                     <button class="btn btn-prev" onclick="prevStep()">이전으로</button>
                     <button class="btn btn-next" onclick="nextStep()">확인했습니다 (다음 단계)</button>
                 `;
-            } else if (stage === 'issue-1') {
+            } else if (stage === 'pay-6') {
                 guidePanel.classList.remove("full-width");
                 phonePanel.classList.remove("hidden");
 
-                document.getElementById("stepNum").innerText = "발급 및 전송 방식 선택 (6-1)";
-                document.getElementById("stepText").innerHTML = issueStep1Text;
+                document.getElementById("stepNum").innerText = "조회 및 방식 선택 (단계 6)";
+                document.getElementById("stepText").innerHTML = payStep6MainText;
 
-                const curImg = document.getElementById("img-issue-1");
+                const curImg = document.getElementById("img-step-6");
                 if (curImg) curImg.classList.add('active');
 
                 buttonContainer.innerHTML = `
                     <button class="btn btn-prev" onclick="prevStep()">이전으로</button>
-                    <button class="btn btn-choice-fax" onclick="selectIssuePath('fax')">팩스전송</button>
-                    <button class="btn btn-choice-cert" onclick="selectIssuePath('cert')">전자증명서</button>
+                    <button class="btn btn-choice-fax" onclick="selectPayIssuePath('fax')">1. 팩스 전송</button>
+                    <button class="btn btn-choice-cert" onclick="selectPayIssuePath('cert')">2. 전자증명서</button>
+                    <button class="btn btn-choice-pdf" onclick="selectPayIssuePath('pdf')">3. PDF 발급 및 실물 출력</button>
                 `;
-            } else if (stage === 'issue-2-fax') {
+            } else if (stage === 'fax') {
                 guidePanel.classList.remove("full-width");
                 phonePanel.classList.remove("hidden");
 
-                document.getElementById("stepNum").innerText = "팩스전송 완료 안내 (6-2)";
-                document.getElementById("stepText").innerHTML = issueStep2FaxText;
+                document.getElementById("stepNum").innerText = "팩스전송 (6-1)";
+                document.getElementById("stepText").innerHTML = faxSteps[0];
 
-                const curImg = document.getElementById("img-issue-2");
+                const curImg = document.getElementById("img-fax-1");
                 if (curImg) curImg.classList.add('active');
 
                 buttonContainer.innerHTML = `
                     <button class="btn btn-prev" onclick="prevStep()">이전으로</button>
-                    <button class="btn btn-next" onclick="resetToStart()">처음 화면으로 돌아가기</button>
+                    <button class="btn btn-next" onclick="resetToStart()">처음 화면으로</button>
                 `;
-            } else if (stage === 'issue-2-cert') {
+            } else if (stage === 'cert') {
                 guidePanel.classList.remove("full-width");
                 phonePanel.classList.remove("hidden");
 
-                document.getElementById("stepNum").innerText = "전자증명서 발급 완료 안내 (6-2)";
-                document.getElementById("stepText").innerHTML = issueStep2CertText;
+                document.getElementById("stepNum").innerText = `전자증명서 발급 단계 ${currentSubStep} / ${certSteps.length}`;
+                document.getElementById("stepText").innerHTML = certSteps[currentSubStep - 1];
 
-                const curImg = document.getElementById("img-issue-1");
+                const curImg = document.getElementById(`img-cert-${currentSubStep}`);
+                if (curImg) curImg.classList.add('active');
+
+                if (currentSubStep < certSteps.length) {
+                    buttonContainer.innerHTML = `
+                        <button class="btn btn-prev" onclick="prevStep()">이전으로</button>
+                        <button class="btn btn-next" onclick="nextStep()">확인했습니다 (다음 단계)</button>
+                    `;
+                } else {
+                    buttonContainer.innerHTML = `
+                        <button class="btn btn-prev" onclick="prevStep()">이전으로</button>
+                        <button class="btn btn-next" onclick="resetToStart()">처음 화면으로</button>
+                    `;
+                }
+            } else if (stage === 'pdf') {
+                guidePanel.classList.remove("full-width");
+                phonePanel.classList.remove("hidden");
+
+                document.getElementById("stepNum").innerText = `PDF 발급 및 실물 출력 단계 ${currentSubStep} / ${pdfSteps.length}`;
+                document.getElementById("stepText").innerHTML = pdfSteps[currentSubStep - 1];
+
+                const curImg = document.getElementById(`img-pdf-${currentSubStep}`);
+                if (curImg) curImg.classList.add('active');
+
+                if (currentSubStep < pdfSteps.length) {
+                    buttonContainer.innerHTML = `
+                        <button class="btn btn-prev" onclick="prevStep()">이전으로</button>
+                        <button class="btn btn-next" onclick="nextStep()">확인했습니다 (다음 단계)</button>
+                    `;
+                } else {
+                    buttonContainer.innerHTML = `
+                        <button class="btn btn-prev" onclick="prevStep()">이전으로</button>
+                        <button class="btn btn-next" onclick="resetToStart()">처음 화면으로</button>
+                    `;
+                }
+            } else if (stage === 'wn-main') {
+                guidePanel.classList.remove("full-width");
+                phonePanel.classList.remove("hidden");
+
+                document.getElementById("stepNum").innerText = "완납증명서 발급 방식 선택";
+                document.getElementById("stepText").innerHTML = wnMainText;
+
+                const curImg = document.getElementById("img-wn-main");
                 if (curImg) curImg.classList.add('active');
 
                 buttonContainer.innerHTML = `
                     <button class="btn btn-prev" onclick="prevStep()">이전으로</button>
-                    <button class="btn btn-next" onclick="resetToStart()">처음 화면으로 돌아가기</button>
+                    <button class="btn btn-choice-pdf" onclick="selectWnIssuePath('print')">② 미리보기 (실물 종이 출력)</button>
+                    <button class="btn btn-choice-fax" onclick="selectWnIssuePath('fax')">③ 팩스 전송</button>
+                `;
+            } else if (stage === 'wn-print') {
+                guidePanel.classList.remove("full-width");
+                phonePanel.classList.remove("hidden");
+
+                document.getElementById("stepNum").innerText = `완납증명서 실물 출력 단계 ${currentSubStep} / ${wnPrintSteps.length}`;
+                document.getElementById("stepText").innerHTML = wnPrintSteps[currentSubStep - 1];
+
+                const curImg = document.getElementById(`img-wn-print-${currentSubStep}`);
+                if (curImg) curImg.classList.add('active');
+
+                if (currentSubStep < wnPrintSteps.length) {
+                    buttonContainer.innerHTML = `
+                        <button class="btn btn-prev" onclick="prevStep()">이전으로</button>
+                        <button class="btn btn-next" onclick="nextStep()">확인했습니다 (다음 단계)</button>
+                    `;
+                } else {
+                    buttonContainer.innerHTML = `
+                        <button class="btn btn-prev" onclick="prevStep()">이전으로</button>
+                        <button class="btn btn-next" onclick="resetToStart()">처음 화면으로</button>
+                    `;
+                }
+            } else if (stage === 'wn-fax') {
+                guidePanel.classList.remove("full-width");
+                phonePanel.classList.remove("hidden");
+
+                document.getElementById("stepNum").innerText = "완납증명서 팩스 전송";
+                document.getElementById("stepText").innerHTML = wnFaxSteps[0];
+
+                const curImg = document.getElementById("img-wn-fax");
+                if (curImg) curImg.classList.add('active');
+
+                buttonContainer.innerHTML = `
+                    <button class="btn btn-prev" onclick="prevStep()">이전으로</button>
+                    <button class="btn btn-next" onclick="resetToStart()">처음 화면으로</button>
                 `;
             }
+        }
+
+        function startWorkflow(docType) {
+            selectedDoc = docType;
+            stage = 'common';
+            currentSubStep = 1;
+            refreshDisplay();
         }
 
         function selectLoginPath(chosenPath) {
@@ -489,18 +709,25 @@
             refreshDisplay();
         }
 
-        function selectIssuePath(chosenIssue) {
-            if (chosenIssue === 'fax') {
-                stage = 'issue-2-fax';
+        function selectPayIssuePath(chosenIssue) {
+            stage = chosenIssue;
+            currentSubStep = 1;
+            refreshDisplay();
+        }
+
+        function selectWnIssuePath(chosenIssue) {
+            if (chosenIssue === 'print') {
+                stage = 'wn-print';
             } else {
-                stage = 'issue-2-cert';
+                stage = 'wn-fax';
             }
+            currentSubStep = 1;
             refreshDisplay();
         }
 
         function nextStep() {
             if (stage === 'common') {
-                if (currentSubStep < commonSteps.length) {
+                if (currentSubStep < 4) {
                     currentSubStep++;
                 } else {
                     stage = 'choice';
@@ -509,15 +736,25 @@
                 if (currentSubStep < kakaoSteps.length) {
                     currentSubStep++;
                 } else {
-                    // 카카오 인증 끝나면 6-1 조회 화면으로 진입
-                    stage = 'issue-1';
+                    stage = (selectedDoc === 'pay') ? 'pay-6' : 'wn-main';
                 }
             } else if (stage === 'nhis') {
                 if (currentSubStep < nhisSteps.length) {
                     currentSubStep++;
                 } else {
-                    // 건강보험 인증서 로그인 끝나면 6-1 조회 화면으로 진입
-                    stage = 'issue-1';
+                    stage = (selectedDoc === 'pay') ? 'pay-6' : 'wn-main';
+                }
+            } else if (stage === 'cert') {
+                if (currentSubStep < certSteps.length) {
+                    currentSubStep++;
+                }
+            } else if (stage === 'pdf') {
+                if (currentSubStep < pdfSteps.length) {
+                    currentSubStep++;
+                }
+            } else if (stage === 'wn-print') {
+                if (currentSubStep < wnPrintSteps.length) {
+                    currentSubStep++;
                 }
             }
             refreshDisplay();
@@ -527,18 +764,19 @@
             if (stage === 'common') {
                 if (currentSubStep > 1) {
                     currentSubStep--;
+                } else {
+                    stage = 'home';
                 }
             } else if (stage === 'choice') {
                 stage = 'common';
-                currentSubStep = commonSteps.length;
+                currentSubStep = 4;
             } else if (stage === 'kakao' || stage === 'nhis') {
                 if (currentSubStep > 1) {
                     currentSubStep--;
                 } else {
                     stage = 'choice';
                 }
-            } else if (stage === 'issue-1') {
-                // 이전 누르면 이전에 진행했던 로그인 경로의 마지막 단계로 복귀
+            } else if (stage === 'pay-6' || stage === 'wn-main') {
                 if (loginMethod === 'kakao') {
                     stage = 'kakao';
                     currentSubStep = kakaoSteps.length;
@@ -546,14 +784,34 @@
                     stage = 'nhis';
                     currentSubStep = nhisSteps.length;
                 }
-            } else if (stage === 'issue-2-fax' || stage === 'issue-2-cert') {
-                stage = 'issue-1';
+            } else if (stage === 'fax') {
+                stage = 'pay-6';
+            } else if (stage === 'cert') {
+                if (currentSubStep > 1) {
+                    currentSubStep--;
+                } else {
+                    stage = 'pay-6';
+                }
+            } else if (stage === 'pdf') {
+                if (currentSubStep > 1) {
+                    currentSubStep--;
+                } else {
+                    stage = 'pay-6';
+                }
+            } else if (stage === 'wn-print') {
+                if (currentSubStep > 1) {
+                    currentSubStep--;
+                } else {
+                    stage = 'wn-main';
+                }
+            } else if (stage === 'wn-fax') {
+                stage = 'wn-main';
             }
             refreshDisplay();
         }
 
         function resetToStart() {
-            stage = 'common';
+            stage = 'home';
             currentSubStep = 1;
             refreshDisplay();
         }
