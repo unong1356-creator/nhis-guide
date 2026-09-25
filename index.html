@@ -41,6 +41,8 @@
         .header {
             border-bottom: 4px solid #1D9E75;
             padding-bottom: 20px;
+            cursor: pointer;
+            user-select: none;
         }
 
         .header h1 {
@@ -167,7 +169,7 @@
             background-color: #157958;
         }
 
-        /* 로그인 분기 선택 버튼 */
+        /* 분기 선택 버튼 */
         .btn-choice-kakao {
             background-color: #fee500;
             color: #191919;
@@ -184,7 +186,6 @@
             background-color: #c74300;
         }
 
-        /* 발급 방식 버튼 */
         .btn-choice-fax {
             background-color: #2563eb;
             color: #ffffff;
@@ -259,7 +260,7 @@
             pointer-events: auto;
         }
 
-        /* 3개 이미지 가로 나열 컨테이너 */
+        /* 3개 이미지 나열 컨테이너 */
         .triple-image-container {
             display: none;
             width: 100%;
@@ -300,12 +301,124 @@
             font-weight: 800;
             color: #005088;
         }
+
+        /* 관리자 통계 팝업 모달 */
+        .admin-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.6);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+        }
+        .admin-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 530px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .admin-content h2 {
+            color: #005088;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #1D9E75;
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .section-title {
+            font-size: 15px;
+            font-weight: bold;
+            color: #475569;
+            margin: 12px 0 6px 0;
+            background-color: #f1f5f9;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .stat-item {
+            font-size: 16px;
+            margin: 8px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .stat-item b {
+            color: #E65100;
+        }
+        .diff-tag {
+            font-size: 13px;
+            font-weight: bold;
+            margin-left: 6px;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .diff-up {
+            color: #dc2626;
+            background-color: #fee2e2;
+        }
+        .diff-down {
+            color: #2563eb;
+            background-color: #dbeafe;
+        }
+        .diff-same {
+            color: #64748b;
+            background-color: #f1f5f9;
+        }
+        .admin-btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .btn-admin-action {
+            flex: 1;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .btn-archive {
+            background-color: #f59e0b;
+            color: white;
+        }
+        .btn-archive:hover {
+            background-color: #d97706;
+        }
+        .btn-reset {
+            background-color: #ef4444;
+            color: white;
+        }
+        .btn-reset:hover {
+            background-color: #dc2626;
+        }
+        .btn-close-modal {
+            margin-top: 10px;
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background-color: #005088;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
     <div class="guide-panel" id="guidePanel">
-        <div class="header">
+        <!-- 5회 연속 클릭 시 관리자 통계 모달 오픈 -->
+        <div class="header" onclick="handleAdminTrigger()">
             <h1>국민건강보험 서류발급 비서 '든든이'</h1>
         </div>
 
@@ -323,17 +436,14 @@
     <div class="phone-panel" id="phonePanel">
         <div class="phone-frame">
             <div class="phone-screen" id="imageContainer">
-                <!-- 공통 단계 (납부확인서: 0, 1, 2, 3) -->
                 <img src="0.png" alt="0" class="raw-guide-image" id="img-common-1">
                 <img src="1.png" alt="1" class="raw-guide-image" id="img-common-2">
                 <img src="2.png" alt="2" class="raw-guide-image" id="img-common-3">
                 <img src="3.png" alt="3" class="raw-guide-image" id="img-common-4">
 
-                <!-- 완납증명서 전용 초기 단계 (7-0.png, 7-0-1.png) -->
                 <img src="7-0.png" alt="7-0" class="raw-guide-image" id="img-wn-init-3">
                 <img src="7-0-1.png" alt="7-0-1" class="raw-guide-image" id="img-wn-init-4">
 
-                <!-- 분기 A: 카카오 간편인증 (5-1~5-6) -->
                 <img src="5-1.png" alt="5-1" class="raw-guide-image" id="img-kakao-1">
                 <img src="5-2.png" alt="5-2" class="raw-guide-image" id="img-kakao-2">
                 <img src="5-3.png" alt="5-3" class="raw-guide-image" id="img-kakao-3">
@@ -341,7 +451,6 @@
                 <img src="5-5.png" alt="5-5" class="raw-guide-image" id="img-kakao-5">
                 <img src="5-6.png" alt="5-6" class="raw-guide-image" id="img-kakao-6">
 
-                <!-- 분기 B: 건강보험 인증서 (4-1~4-10) -->
                 <img src="4-1.png" alt="4-1" class="raw-guide-image" id="img-nhis-1">
                 <img src="4-2.png" alt="4-2" class="raw-guide-image" id="img-nhis-2">
                 <img src="4-3.png" alt="4-3" class="raw-guide-image" id="img-nhis-3">
@@ -353,7 +462,6 @@
                 <img src="4-9.png" alt="4-9" class="raw-guide-image" id="img-nhis-9">
                 <img src="4-10.png" alt="4-10" class="raw-guide-image" id="img-nhis-10">
 
-                <!-- 건강보험 인증서 11단계 (4-11 ~ 4-13 3분할) -->
                 <div class="triple-image-container" id="tripleContainer">
                     <div class="triple-image-item">
                         <img src="4-11.png" alt="4-11">
@@ -369,7 +477,6 @@
                     </div>
                 </div>
 
-                <!-- [납부확인서] 6단계 메인 및 분기 이미지 -->
                 <img src="6.png" alt="6" class="raw-guide-image" id="img-step-6">
                 <img src="6-1.png" alt="6-1" class="raw-guide-image" id="img-fax-1">
                 <img src="6-2.png" alt="6-2" class="raw-guide-image" id="img-cert-1">
@@ -381,7 +488,6 @@
                 <img src="6-3-4.png" alt="6-3-4" class="raw-guide-image" id="img-pdf-5">
                 <img src="6-3-5.png" alt="6-3-5" class="raw-guide-image" id="img-pdf-6">
 
-                <!-- [완납증명서] 7단계 메인 및 분기 이미지 -->
                 <img src="7.png" alt="7" class="raw-guide-image" id="img-wn-main">
                 <img src="7-1-1.png" alt="7-1-1" class="raw-guide-image" id="img-wn-print-1">
                 <img src="7-1-2.png" alt="7-1-2" class="raw-guide-image" id="img-wn-print-2">
@@ -390,13 +496,126 @@
         </div>
     </div>
 
+    <!-- 관리자 성과 비교 모달 -->
+    <div class="admin-modal" id="adminModal">
+        <div class="admin-content">
+            <h2>
+                <span>📊 발급 성과 관리</span>
+                <span style="font-size: 13px; font-weight: normal; color: #64748b;">전일 대비 비교</span>
+            </h2>
+
+            <div class="section-title">📌 전체 발급 실적</div>
+            <div class="stat-item">
+                <span>총 발급 시도:</span>
+                <div>
+                    <b id="statAttempt">0</b>건
+                    <span id="diffAttempt" class="diff-tag"></span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <span>총 발급 완료:</span>
+                <div>
+                    <b id="statComplete">0</b>건
+                    <span id="diffComplete" class="diff-tag"></span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <span>비대면 성공률:</span>
+                <div>
+                    <b id="statRate">0%</b>
+                    <span id="diffRate" class="diff-tag"></span>
+                </div>
+            </div>
+
+            <div class="section-title">🔑 로그인 인증 방식별 현황</div>
+            <div class="stat-item">
+                <span>- 간편인증(카카오 등):</span>
+                <div>
+                    <b id="statKakao">0</b>건 (<span id="rateKakao">0%</span>)
+                    <span id="diffKakao" class="diff-tag"></span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <span>- 건강보험 인증서:</span>
+                <div>
+                    <b id="statNhis">0</b>건 (<span id="rateNhis">0%</span>)
+                    <span id="diffNhis" class="diff-tag"></span>
+                </div>
+            </div>
+
+            <div class="section-title">📄 서류 종류별 완료 현황</div>
+            <div class="stat-item">
+                <span>- 납부확인서 완료:</span>
+                <div>
+                    <b id="statPay">0</b>건
+                    <span id="diffPay" class="diff-tag"></span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <span>- 완납증명서 완료:</span>
+                <div>
+                    <b id="statWn">0</b>건
+                    <span id="diffWn" class="diff-tag"></span>
+                </div>
+            </div>
+            
+            <div class="stat-item" style="font-size: 14px; color: #64748b; margin-top: 10px;">
+                * 오늘 단축된 대기시간: <b id="statTimeSaved" style="color: #1D9E75;">0</b>분
+            </div>
+
+            <div class="admin-btn-group">
+                <button class="btn-admin-action btn-archive" onclick="archiveTodayStats()">오늘 마감(어제로 이관)</button>
+                <button class="btn-admin-action btn-reset" onclick="resetAllStats()">전체 초기화</button>
+            </div>
+            <button class="btn-close-modal" onclick="closeAdminModal()">창 닫기</button>
+        </div>
+    </div>
+
     <script>
-        let selectedDoc = 'pay'; // 'pay' | 'complete'
+        // ★ 구글 Apps Script 웹 앱 URL 입력란
+        const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbyzqp8pBGs-jlXQbFUuFSNeI9lmpHfBGpJjjEUPkJdsxlvUnBfkyAHNlVhAsjNkAgaF/exec";
+
+        function recordLog(action, docType, issueMethod) {
+            const authText = (loginMethod === 'kakao') ? '카카오간편인증' : ((loginMethod === 'nhis') ? '건강보험인증서' : '미선택');
+            const docText = (docType === 'pay') ? '보험료 납부확인서' : '4대보험 완납증명서';
+
+            if (action === '시도') {
+                let attempts = parseInt(localStorage.getItem('stat_attempts') || '0') + 1;
+                localStorage.setItem('stat_attempts', attempts);
+            } else if (action === '완료') {
+                let completes = parseInt(localStorage.getItem('stat_completes') || '0') + 1;
+                localStorage.setItem('stat_completes', completes);
+                if (docType === 'pay') {
+                    let payCnt = parseInt(localStorage.getItem('stat_pay') || '0') + 1;
+                    localStorage.setItem('stat_pay', payCnt);
+                } else {
+                    let wnCnt = parseInt(localStorage.getItem('stat_wn') || '0') + 1;
+                    localStorage.setItem('stat_wn', wnCnt);
+                }
+            }
+
+            if (GOOGLE_SHEET_URL && GOOGLE_SHEET_URL !== "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL") {
+                const payload = {
+                    action: action,
+                    document: docText,
+                    authMethod: authText,
+                    issueMethod: issueMethod
+                };
+
+                fetch(GOOGLE_SHEET_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                }).catch(err => console.log('Log completed'));
+            }
+        }
+
+        let selectedDoc = 'pay'; 
         let stage = 'home'; 
         let currentSubStep = 1;
-        let loginMethod = 'kakao'; 
+        let loginMethod = 'none'; 
 
-        // 1. 공통 및 초기 단계 안내 문구
         function getCommonStepText(subStep) {
             if (subStep === 1) {
                 return `안녕하세요, 고객님!\n창구 대기 고객이 많아 오래 기다리셔야 합니다.\n\n대기 없이 <span class="orange">3분 만에 스마트폰으로 서류 발급 가능</span>합니다!\n\n<span class="orange">[건강보험 25시]</span> 어플이 있으신가요?\n없으시다면, 우측의 <span class="orange">QR코드</span>를 통해 설치해주세요!`;
@@ -417,10 +636,8 @@
             }
         }
 
-        // 2. 로그인 선택 문구
         const choiceStepText = `카카오톡 또는 네이버 인증서 발급이 되어있으신가요?\n\n[카카오톡 또는 네이버 인증서]가 있다면 -> <span class="orange">간편인증 로그인</span>\n없으시다면 -> <span class="orange">건강보험 인증서 발급 로그인</span>\n\n건강보험 인증서 발급 시 [건강보험 25시] 어플 사용 시 자동로그인 되어 편리합니다!\n\n선택해주세요!`;
 
-        // 3. 카카오 간편인증 문구
         const kakaoSteps = [
             `주황색으로 강조 표시된 <span class="orange">[로그인]</span>을 선택해주세요.`,
             `주황색으로 강조 표시된 <span class="orange">[카카오톡]</span>을 선택해주세요.`,
@@ -430,7 +647,6 @@
             `카카오톡 인증 완료 후 어플로 돌아와 하단의 주황색 <span class="orange">[인증 완료]</span>를 눌러주세요!`
         ];
 
-        // 4. 건강보험 인증서 문구
         const nhisSteps = [
             `주황색으로 강조 표시된 <span class="orange">[다른 로그인 방법 선택]</span>을 선택해주세요.`,
             `주황색으로 강조 표시된 <span class="orange">[건강보험 인증서]</span>를 선택해주세요.`,
@@ -445,7 +661,6 @@
             `<span class="orange">[로그인]</span>을 눌러주시고, 설정한 <span class="orange">비밀번호 6자리</span>를 입력해주세요!`
         ];
 
-        // 5. [납부확인서] 안내 문구
         const payStep6MainText = `주황색으로 강조 표시된 <span class="orange">①, ②, ③번</span>을 설정한 뒤 <span class="orange">④번 [조 회]</span>를 눌러주세요!\n\n조회 결과에서 <span class="orange">⑤번 목록 체크</span> 후,\n★ 실물 종이 출력을 원하시면 하단 파란색 <span class="orange">[전자증명서(다운로드)]</span>를 눌러주셔야 합니다!\n\n원하시는 발급 방식을 아래 버튼에서 선택해 주세요!`;
         const faxSteps = [`①, ②번 순서에 따라\n<span class="orange">팩스전송번호 확인</span>을 위해 두 번 입력한 후\n③번 <span class="orange">[팩스보내기]</span>를 눌러주세요!\n\n<span class="orange">납부확인서 팩스 전송 성공입니다!</span> 고생하셨습니다 ㅎㅎ`];
         const certSteps = [`하단의 주황색 화살표가 가리키는 <span class="orange">[발급내역 확인]</span> 버튼을 선택해주세요!`, `①번 <span class="orange">체크박스</span>를 선택한 뒤\n하단의 ②번 <span class="orange">[보내기]</span> 버튼을 눌러주세요!\n\n스마트폰 전자문서지갑으로 서류가 안전하게 발급되었습니다!`];
@@ -458,7 +673,6 @@
             `<span class="orange">★ 마지막 제출 및 실물 출력 안내 ★</span>\n\n1. 스마트폰 파일 앱에서 다운로드한 제증명서를 엽니다.\n2. 화면을 캡처한 후 <span class="orange">1844-2716</span> 번호로 사진 문자를 전송합니다.\n3. 창구 직원에게 신분증을 제시하고 종이 출력물을 수령하시면 끝납니다!`
         ];
 
-        // 6. [완납증명서] 7.png 반영 안내 문구
         const wnMainText = `주황색으로 강조 표시된 <span class="orange">①번 [보험구분]</span>을 확인하신 후 발급 방식을 선택해 주세요!\n\n- 종이로 직접 출력하시려면 -> <span class="orange">②번 [미리보기]</span> 선택\n- 팩스로 전송하시려면 -> <span class="orange">③번 [팩스]</span> 선택\n\n원하시는 발급 방식을 아래 버튼에서 눌러주세요!`;
         const wnPrintSteps = [
             `하단 좌측의 <span class="orange">[미리보기]</span>를 누르신 후,\n화면 상단 주황색 네모로 표시된 <span class="orange">[파일 저장(디스켓 모양)]</span> 아이콘을 눌러 스마트폰에 저장해주세요!`,
@@ -596,6 +810,8 @@
                 const curImg = document.getElementById("img-fax-1");
                 if (curImg) curImg.classList.add('active');
 
+                recordLog('완료', 'pay', '팩스전송');
+
                 buttonContainer.innerHTML = `
                     <button class="btn btn-prev" onclick="prevStep()">이전으로</button>
                     <button class="btn btn-next" onclick="resetToStart()">처음 화면으로</button>
@@ -616,6 +832,8 @@
                         <button class="btn btn-next" onclick="nextStep()">확인했습니다 (다음 단계)</button>
                     `;
                 } else {
+                    recordLog('완료', 'pay', '전자증명서');
+
                     buttonContainer.innerHTML = `
                         <button class="btn btn-prev" onclick="prevStep()">이전으로</button>
                         <button class="btn btn-next" onclick="resetToStart()">처음 화면으로</button>
@@ -637,6 +855,8 @@
                         <button class="btn btn-next" onclick="nextStep()">확인했습니다 (다음 단계)</button>
                     `;
                 } else {
+                    recordLog('완료', 'pay', 'PDF 실물출력');
+
                     buttonContainer.innerHTML = `
                         <button class="btn btn-prev" onclick="prevStep()">이전으로</button>
                         <button class="btn btn-next" onclick="resetToStart()">처음 화면으로</button>
@@ -673,6 +893,8 @@
                         <button class="btn btn-next" onclick="nextStep()">확인했습니다 (다음 단계)</button>
                     `;
                 } else {
+                    recordLog('완료', 'complete', 'PDF 실물출력');
+
                     buttonContainer.innerHTML = `
                         <button class="btn btn-prev" onclick="prevStep()">이전으로</button>
                         <button class="btn btn-next" onclick="resetToStart()">처음 화면으로</button>
@@ -688,6 +910,8 @@
                 const curImg = document.getElementById("img-wn-fax");
                 if (curImg) curImg.classList.add('active');
 
+                recordLog('완료', 'complete', '팩스전송');
+
                 buttonContainer.innerHTML = `
                     <button class="btn btn-prev" onclick="prevStep()">이전으로</button>
                     <button class="btn btn-next" onclick="resetToStart()">처음 화면으로</button>
@@ -697,13 +921,28 @@
 
         function startWorkflow(docType) {
             selectedDoc = docType;
+            loginMethod = 'none';
             stage = 'common';
             currentSubStep = 1;
+
+            recordLog('시도', docType, '-');
+
             refreshDisplay();
         }
 
+        // 로그인 분기 선택 및 로깅
         function selectLoginPath(chosenPath) {
             loginMethod = chosenPath;
+
+            // 로컬스토리지에 인증방식 카운트 기록
+            if (chosenPath === 'kakao') {
+                let kCnt = parseInt(localStorage.getItem('stat_auth_kakao') || '0') + 1;
+                localStorage.setItem('stat_auth_kakao', kCnt);
+            } else if (chosenPath === 'nhis') {
+                let nCnt = parseInt(localStorage.getItem('stat_auth_nhis') || '0') + 1;
+                localStorage.setItem('stat_auth_nhis', nCnt);
+            }
+
             stage = chosenPath;
             currentSubStep = 1;
             refreshDisplay();
@@ -814,6 +1053,132 @@
             stage = 'home';
             currentSubStep = 1;
             refreshDisplay();
+        }
+
+        // 5회 터치 시 관리자 모달 트리거
+        let adminClickCount = 0;
+        let adminClickTimer = null;
+        function handleAdminTrigger() {
+            adminClickCount++;
+            clearTimeout(adminClickTimer);
+            adminClickTimer = setTimeout(() => {
+                adminClickCount = 0;
+            }, 2000);
+
+            if (adminClickCount >= 5) {
+                adminClickCount = 0;
+                openAdminModal();
+            }
+        }
+
+        // 전일 대비 증감 태그 렌더링 헬퍼 함수
+        function renderDiffTag(elementId, currentVal, prevVal, isRate = false) {
+            const el = document.getElementById(elementId);
+            const diff = currentVal - prevVal;
+            if (prevVal === 0 && currentVal === 0) {
+                el.innerText = '-';
+                el.className = 'diff-tag diff-same';
+                return;
+            }
+
+            if (diff > 0) {
+                el.innerText = `+${isRate ? diff.toFixed(1) : diff}${isRate ? '%p' : ''} 🔺`;
+                el.className = 'diff-tag diff-up';
+            } else if (diff < 0) {
+                el.innerText = `${isRate ? diff.toFixed(1) : diff}${isRate ? '%p' : ''} 🔻`;
+                el.className = 'diff-tag diff-down';
+            } else {
+                el.innerText = `변동 없음`;
+                el.className = 'diff-tag diff-same';
+            }
+        }
+
+        function openAdminModal() {
+            // 오늘 데이터
+            const attempts = parseInt(localStorage.getItem('stat_attempts') || '0');
+            const completes = parseInt(localStorage.getItem('stat_completes') || '0');
+            const kakaoCnt = parseInt(localStorage.getItem('stat_auth_kakao') || '0');
+            const nhisCnt = parseInt(localStorage.getItem('stat_auth_nhis') || '0');
+            const payCnt = parseInt(localStorage.getItem('stat_pay') || '0');
+            const wnCnt = parseInt(localStorage.getItem('stat_wn') || '0');
+
+            const totalAuth = kakaoCnt + nhisCnt;
+            const rateKakao = totalAuth > 0 ? ((kakaoCnt / totalAuth) * 100).toFixed(1) : 0;
+            const rateNhis = totalAuth > 0 ? ((nhisCnt / totalAuth) * 100).toFixed(1) : 0;
+
+            const rate = attempts > 0 ? parseFloat(((completes / attempts) * 100).toFixed(1)) : 0;
+            const timeSaved = completes * 15;
+
+            // 어제 데이터
+            const prevAttempts = parseInt(localStorage.getItem('prev_stat_attempts') || '0');
+            const prevCompletes = parseInt(localStorage.getItem('prev_stat_completes') || '0');
+            const prevKakaoCnt = parseInt(localStorage.getItem('prev_stat_auth_kakao') || '0');
+            const prevNhisCnt = parseInt(localStorage.getItem('prev_stat_auth_nhis') || '0');
+            const prevPayCnt = parseInt(localStorage.getItem('prev_stat_pay') || '0');
+            const prevWnCnt = parseInt(localStorage.getItem('prev_stat_wn') || '0');
+            const prevRate = prevAttempts > 0 ? parseFloat(((prevCompletes / prevAttempts) * 100).toFixed(1)) : 0;
+
+            // 값 바인딩
+            document.getElementById('statAttempt').innerText = attempts;
+            document.getElementById('statComplete').innerText = completes;
+            document.getElementById('statRate').innerText = `${rate}%`;
+            document.getElementById('statKakao').innerText = kakaoCnt;
+            document.getElementById('rateKakao').innerText = `${rateKakao}%`;
+            document.getElementById('statNhis').innerText = nhisCnt;
+            document.getElementById('rateNhis').innerText = `${rateNhis}%`;
+            document.getElementById('statPay').innerText = payCnt;
+            document.getElementById('statWn').innerText = wnCnt;
+            document.getElementById('statTimeSaved').innerText = timeSaved;
+
+            // 전일 대비 증감 렌더링
+            renderDiffTag('diffAttempt', attempts, prevAttempts);
+            renderDiffTag('diffComplete', completes, prevCompletes);
+            renderDiffTag('diffRate', rate, prevRate, true);
+            renderDiffTag('diffKakao', kakaoCnt, prevKakaoCnt);
+            renderDiffTag('diffNhis', nhisCnt, prevNhisCnt);
+            renderDiffTag('diffPay', payCnt, prevPayCnt);
+            renderDiffTag('diffWn', wnCnt, prevWnCnt);
+
+            document.getElementById('adminModal').style.display = 'flex';
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminModal').style.display = 'none';
+        }
+
+        // 오늘 마감 및 어제로 이관
+        function archiveTodayStats() {
+            if (confirm("오늘 실적을 '어제 데이터'로 이관하고, 오늘 수치를 0으로 초기화하시겠습니까?\n(내일 실적과 비교 기준으로 사용됩니다.)")) {
+                localStorage.setItem('prev_stat_attempts', localStorage.getItem('stat_attempts') || '0');
+                localStorage.setItem('prev_stat_completes', localStorage.getItem('stat_completes') || '0');
+                localStorage.setItem('prev_stat_auth_kakao', localStorage.getItem('stat_auth_kakao') || '0');
+                localStorage.setItem('prev_stat_auth_nhis', localStorage.getItem('stat_auth_nhis') || '0');
+                localStorage.setItem('prev_stat_pay', localStorage.getItem('stat_pay') || '0');
+                localStorage.setItem('prev_stat_wn', localStorage.getItem('stat_wn') || '0');
+
+                localStorage.setItem('stat_attempts', '0');
+                localStorage.setItem('stat_completes', '0');
+                localStorage.setItem('stat_auth_kakao', '0');
+                localStorage.setItem('stat_auth_nhis', '0');
+                localStorage.setItem('stat_pay', '0');
+                localStorage.setItem('stat_wn', '0');
+
+                alert("오늘 실적이 마감되었습니다. 수치가 새롭게 시작됩니다.");
+                openAdminModal();
+            }
+        }
+
+        // 전체 초기화
+        function resetAllStats() {
+            if (confirm("어제 및 오늘의 모든 통계 데이터를 완전히 삭제하시겠습니까?")) {
+                const keys = [
+                    'stat_attempts', 'stat_completes', 'stat_auth_kakao', 'stat_auth_nhis', 'stat_pay', 'stat_wn',
+                    'prev_stat_attempts', 'prev_stat_completes', 'prev_stat_auth_kakao', 'prev_stat_auth_nhis', 'prev_stat_pay', 'prev_stat_wn'
+                ];
+                keys.forEach(k => localStorage.removeItem(k));
+                alert("모든 통계가 초기화되었습니다.");
+                openAdminModal();
+            }
         }
 
         window.onload = function() {
